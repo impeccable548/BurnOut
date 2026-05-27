@@ -1,0 +1,6 @@
+{
+  "name": "BurnOut",
+  "description": "A premium, minimal Solana wallet optimization and transaction diagnostic utility for reclamation and transaction diagnostics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
