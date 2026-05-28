@@ -260,7 +260,7 @@ async function startServer() {
           program_name: "Metaplex Token Metadata",
           error_code: "0x12 / InsufficientFunds",
           error_message: "InstructionError(1, Custom(18))",
-          human_cause: "The transaction failed during an NFT mint/transfer program call because your wallet balance dropped below the exact rent-exempt threshold required to initialize the new to[...]",
+          human_cause: "The transaction failed during an NFT mint/transfer program call because your wallet balance dropped below the exact rent-exempt threshold required to initialize the new token metadata storage account.",
           recovery_action: "Maintain an extra 0.005 SOL buffer in your keypair to cover rent-exemption fees when compiling newly initialized program storage variables.",
           timestamp: "2026-05-23T18:42:01Z"
         }
@@ -301,11 +301,6 @@ async function startServer() {
       appType: "spa"
     });
     app.use(vite.middlewares);
-    
-    // Catch-all for SPA routing
-    app.get("*", (req, res) => {
-      res.redirect("/");
-    });
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
