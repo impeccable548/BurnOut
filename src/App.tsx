@@ -193,8 +193,20 @@ export default function App() {
       });
 
       if (!response.ok) {
-        const errDetails = await response.json();
-        throw new Error(errDetails.detail || "Failed to analyze Solana wallet.");
+        let errMsg = "Failed to analyze Solana wallet.";
+        try {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const errDetails = await response.json();
+            errMsg = errDetails.detail || errMsg;
+          } else {
+            const rawText = await response.text();
+            errMsg = rawText.length > 120 ? `${rawText.substring(0, 117)}...` : rawText || errMsg;
+          }
+        } catch (_) {
+          // ignore parsing error, use default
+        }
+        throw new Error(errMsg);
       }
 
       const data = await response.json();
@@ -257,8 +269,8 @@ export default function App() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col justify-between selection:bg-[#FF5722] selection:text-zinc-955 font-sans" id="burnout-app">
       
       {/* HEADER SECTION */}
-      <header className="border-b border-zinc-900 py-4 px-6 backdrop-blur-md bg-zinc-950/80 sticky top-0 z-50 transition-all duration-300" id="burnout-header">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <header className="border-b border-zinc-900 py-4 px-4 sm:px-6 backdrop-blur-md bg-zinc-950/80 sticky top-0 z-50 transition-all duration-300" id="burnout-header">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-2">
           
           {/* LOGO */}
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab("home")} id="brand-logo">
@@ -272,22 +284,22 @@ export default function App() {
           </div>
 
           {/* MIDDLE NAVIGATION */}
-          <nav className="flex items-center space-x-1 border border-zinc-900/65 bg-zinc-950 px-1.5 py-1 rounded" id="header-internal-navigation">
+          <nav className="flex items-center space-x-0.5 sm:space-x-1 border border-zinc-900/65 bg-zinc-950 px-1 py-1 rounded w-full sm:w-auto justify-center" id="header-internal-navigation">
             <button
               onClick={() => setActiveTab("home")}
-              className={`px-3 py-1 font-sans text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "home" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
+              className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "home" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
             >
               Optimizer
             </button>
             <button
               onClick={() => setActiveTab("about")}
-              className={`px-3 py-1 font-sans text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "about" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
+              className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "about" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
             >
               Mechanics
             </button>
             <button
               onClick={() => setActiveTab("telemetry")}
-              className={`px-3 py-1 font-sans text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "telemetry" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
+              className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "telemetry" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
             >
               Telemetry
             </button>
