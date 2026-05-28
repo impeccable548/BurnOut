@@ -1,20 +1,59 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+
+# BurnOut 🔥
+
+**Reclaimed trapped rent on Solana? Spent too long parsing cryptic VM errors?**
+
+Say hello to BurnOut.
+
 </div>
 
-# Run and deploy your AI Studio app
+---
 
-This contains everything you need to run your app locally.
+## What is BurnOut?
 
-View your app in AI Studio: https://ai.studio/apps/d19cc5a6-bc3c-4baa-9dbe-39d922fabb6f
+1. **Analyze empty, obsolete Associated Token Accounts (ATAs).**  
+2. **Reclaim standard 0.002039 SOL locked per unused account.**  
+3. **Autopsy raw program failure logs into clear human remediation paths.**
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## Features
 
+💡 **Clean wallet?** We've got you. Our smart simulator automatically triggers a non-destructive **"Demo Elevation Mode"** with simulated allocations so you can test the fluid zero-risk sweep.
+
+✨ **Zero bloat. Pure utility.**
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js
+- Gemini API Key
+
+### Run Locally
 
 1. Install dependencies:
-   `npm install`
+   ```bash
+   npm install
+   ```
+
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+
 3. Run the app:
-   `npm run dev`
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## Deployment
+
+Deploy on [Render](https://render.com), [Vercel](https://vercel.com), or your preferred platform.
+
+[Your App Link Here]
+
+---
+
+Built with Gemini AI Studio
