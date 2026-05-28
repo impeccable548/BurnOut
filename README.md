@@ -52,7 +52,7 @@ Say hello to BurnOut.
 
 Deploy on [Render](https://render.com), [Vercel](https://vercel.com), or your preferred platform.
 
-[Your App Link Here]
+[App Link Here]
 
 ---
 
@@ -62,4 +62,4 @@ Deploy on [Render](https://render.com), [Vercel](https://vercel.com), or your pr
 
 ---
 
-Built with Gemini AI Studio
+
