@@ -201,11 +201,11 @@ async function startServer() {
         console.warn("Error retrieving live Solana accounts, falling back to clean simulator parameters.", err);
       }
 
-      // Determine finalized reclaim list
+       // Determine finalized reclaim list
       const isDemoKeyword = trimmedAddress.includes("BurnOutReclaim") || trimmedAddress.includes("Jup6LkbZ");
       let reclamationSimulated = false;
       
-      if (reclaimableAccounts.length === 0 || isDemoKeyword) {
+      if (isDemoKeyword) {
         reclamationSimulated = true;
         const numDeadAccounts = (score % 6) + 3; // 3 to 8 accounts
         const rentPerAccount = 0.00203928;

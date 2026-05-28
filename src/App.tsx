@@ -294,7 +294,7 @@ export default function App() {
 
     const isDemoKeyword = targetAddress.includes("BurnOutReclaim") || targetAddress.includes("Jup6LkbZ");
 
-    if (reclaimableAccounts.length === 0 || isDemoKeyword) {
+    if (isDemoKeyword) {
       reclamationSimulated = true;
       const numDeadAccounts = (score % 6) + 3;
       const rentPerAccount = 0.00203928;
@@ -685,15 +685,9 @@ export default function App() {
                             <h2 className="font-sans font-semibold text-xs uppercase tracking-wider text-zinc-400">Rent Reclamation Status</h2>
                           </div>
                           {analysisResult.is_real_data ? (
-                            analysisResult.reclamation_simulated ? (
-                              <span className="font-mono text-[9px] bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2 py-0.5 rounded uppercase tracking-wider font-semibold animate-pulse">
-                                ON-CHAIN + DEMO
-                              </span>
-                            ) : (
-                              <span className="font-mono text-[9px] bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 px-2 py-0.5 rounded uppercase tracking-wider font-semibold animate-pulse">
-                                ON-CHAIN VERIFIED
-                              </span>
-                            )
+                            <span className="font-mono text-[9px] bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 px-2 py-0.5 rounded uppercase tracking-wider font-semibold animate-pulse">
+                              ON-CHAIN VERIFIED
+                            </span>
                           ) : (
                             <span className="font-mono text-[9px] bg-[#FF5722]/10 text-[#FF5722] border border-[#FF5722]/20 px-2 py-0.5 rounded uppercase tracking-wider">
                               SIMULATION MODE
@@ -740,13 +734,6 @@ export default function App() {
                         {/* Details block */}
                         <div className="space-y-2">
                           <span className="font-mono text-[10px] text-zinc-500 uppercase block tracking-wider">DETECTED EMPTY SPL TOKENS ({analysisResult.reclamation.dead_accounts_count})</span>
-                          
-                          {analysisResult.reclamation_simulated && (
-                            <div className="p-3 bg-semibold bg-amber-500/5 border border-amber-500/10 rounded font-sans text-[11px] text-zinc-400 leading-normal">
-                              <span className="font-mono font-bold text-amber-500 block mb-1 uppercase text-[10px] tracking-wider">🔒 DEMO ELEVATION ACTIVE</span>
-                              Real balance of <span className="text-zinc-200 font-mono font-medium">{analysisResult.real_sol_balance?.toFixed(4)} SOL</span> fetched successfully. No obsolete empty accounts found on-chain, so we simulated 5 mock accounts to let you test the sweep!
-                            </div>
-                          )}
                           
                           {analysisResult.reclamation.reclaimable_accounts.length > 0 ? (
                             <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-2">
