@@ -25,3 +25,41 @@ Say hello to BurnOut.
 ✨ **Zero bloat. Pure utility.**
 
 ---
+
+## Getting Started
+
+### Prerequisites
+- Node.js
+- Gemini API Key
+
+### Run Locally
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+
+3. Run the app:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## Deployment
+
+Deploy on [Render](https://render.com), [Vercel](https://vercel.com), or your preferred platform.
+
+[Your App Link Here]
+
+---
+
+## Status
+
+**v1 Alpha** — This is an active development project built to explore full-stack Solana tooling and strengthen development fundamentals across Python, TypeScript, and web technologies. Feedback and contributions are welcome.
+
+---
+
+Built with Gemini AI Studio
