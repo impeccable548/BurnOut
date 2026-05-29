@@ -201,7 +201,8 @@ export default function App() {
 
     try {
       const rpcFetch = async (method: string, params: any[]) => {
-        const response = await fetch("https://api.mainnet-beta.solana.com", {
+        const rpcUrl = (import.meta as any).env?.VITE_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+        const response = await fetch(rpcUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

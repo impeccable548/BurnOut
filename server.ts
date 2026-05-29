@@ -92,7 +92,8 @@ async function startServer() {
       // Helper for direct JSON-RPC fetching
       const fetchSolanaRPC = async (method: string, params: any[]): Promise<any> => {
         try {
-          const response = await fetch("https://api.mainnet-beta.solana.com", {
+          const rpcUrl = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+          const response = await fetch(rpcUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
