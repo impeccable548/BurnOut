@@ -295,6 +295,38 @@ async function startServer() {
     }
   });
 
+  // API Route 3: Secure Solana RPC Proxy (No exposure of actual SOLANA_RPC_URL to client browsers)
+  app.post("/api/solana-rpc", async (req, res) => {
+    try {
+      const { method, params } = req.body;
+      if (!method) {
+        return res.status(400).json({ error: "Solana RPC method key is required." });
+      }
+
+      const rpcUrl = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+      const response = await fetch(rpcUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: Math.floor(Math.random() * 1000000),
+          method,
+          params: params || []
+        })
+      });
+
+      if (!response.ok) {
+        return res.status(response.status).json({ error: `Solana RPC responded with status code ${response.status}` });
+      }
+
+      const json = await response.json();
+      return res.json(json);
+    } catch (err: any) {
+      console.warn("Secure Solana RPC proxy failure:", err);
+      return res.status(500).json({ error: err.message || "Solana RPC proxy request timed out or was refused." });
+    }
+  });
+
   // Serve static files / Vite HMR configuration
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

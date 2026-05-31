@@ -201,20 +201,39 @@ export default function App() {
 
     try {
       const rpcFetch = async (method: string, params: any[]) => {
-        const rpcUrl = (import.meta as any).env?.VITE_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
-        const response = await fetch(rpcUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            id: Math.floor(Math.random() * 1000000),
-            method,
-            params
-          })
-        });
-        if (!response.ok) return null;
-        const json = await response.json();
-        return json?.result;
+        try {
+          // Attempt secure server-side RPC proxy route first to keep keys safely hidden
+          const response = await fetch("/api/solana-rpc", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ method, params })
+          });
+          if (response.ok) {
+            const json = await response.json();
+            return json?.result;
+          }
+        } catch (_) {
+          // fallback to client-side public node below
+        }
+
+        try {
+          // Public public node fallback if backend proxy fails
+          const response = await fetch("https://api.mainnet-beta.solana.com", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              id: Math.floor(Math.random() * 1000000),
+              method,
+              params
+            })
+          });
+          if (response.ok) {
+            const json = await response.json();
+            return json?.result;
+          }
+        } catch (_) {}
+        return null;
       };
 
       // Native balance
