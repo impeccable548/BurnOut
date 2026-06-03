@@ -32,6 +32,9 @@ import {
   Search
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { WalletProvider } from "./utils/walletContext";
+import { WalletConnectButton } from "./components/WalletConnectButton";
+import { ReclaimActionPanel } from "./components/ReclaimActionPanel";
 
 // Structure types
 interface UnusedAccount {
@@ -299,6 +302,7 @@ export default function App() {
 
           reclaimableAccounts.push({
             mint,
+            pubkey: raw.pubkey,
             mangled_mint: `${mintPrefix}...${mintSuffix}`,
             symbol,
             name,
@@ -491,63 +495,68 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-zinc-950 text-zinc-100 flex flex-col justify-between selection:bg-[#FF5722] selection:text-zinc-955 font-sans" id="burnout-app">
-      
-      {/* HEADER SECTION */}
-      <header className="border-b border-zinc-900 py-4 px-4 sm:px-6 backdrop-blur-md bg-zinc-950/80 sticky top-0 z-50 transition-all duration-300" id="burnout-header">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-2">
-          
-          {/* LOGO */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab("home")} id="brand-logo">
-            <div className="w-9 h-9 rounded bg-[#FF5722]/5 flex items-center justify-center border border-[#FF5722]/30 hover:border-[#FF5722]/60 transition-colors">
-              <Flame className="w-4 h-4 text-[#FF5722]" />
-            </div>
-            <div>
-              <span className="font-sans font-bold tracking-tight text-lg text-zinc-100 uppercase">BurnOut</span>
-              <span className="font-mono text-[9px] text-[#FF5722] tracking-widest block -mt-1 uppercase">utility v1.0.0</span>
-            </div>
-          </div>
-
-          {/* MIDDLE NAVIGATION */}
-          <nav className="flex items-center space-x-0.5 sm:space-x-1 border border-zinc-900/65 bg-zinc-950 px-1 py-1 rounded w-full sm:w-auto justify-center" id="header-internal-navigation">
-            <button
-              onClick={() => setActiveTab("home")}
-              className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "home" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
-            >
-              Optimizer
-            </button>
-            <button
-              onClick={() => setActiveTab("about")}
-              className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "about" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
-            >
-              Mechanics
-            </button>
-            <button
-              onClick={() => setActiveTab("telemetry")}
-              className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "telemetry" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
-            >
-              Telemetry
-            </button>
-          </nav>
-
-          {/* RIGHT LIVE BADGES */}
-          <div className="hidden lg:flex items-center space-x-4 text-zinc-400 font-mono text-xs" id="nav-system-status">
-            {networkStatus && (
-              <div className="flex items-center space-x-5">
-                <div className="flex items-center space-x-1.5 bg-[#10B981]/5 px-2.5 py-1 rounded border border-[#10B981]/15">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping"></span>
-                  <span className="text-zinc-400 text-[10px] tracking-wide uppercase">SOLANA LIVE:</span>
-                  <span className="text-[#10B981] font-semibold">{(networkStatus.current_tps + tpsFlicker).toLocaleString()} TPS</span>
-                </div>
-                <div className="flex items-center space-x-1 text-[10px]">
-                  <span className="text-zinc-500">CONGESTION:</span>
-                  <span className="text-amber-500 uppercase font-medium">{networkStatus.congestion_level}</span>
-                </div>
+    <WalletProvider>
+      <div className="min-h-screen w-full overflow-x-hidden bg-zinc-950 text-zinc-100 flex flex-col justify-between selection:bg-[#FF5722] selection:text-zinc-955 font-sans" id="burnout-app">
+        
+        {/* HEADER SECTION */}
+        <header className="border-b border-zinc-900 py-4 px-4 sm:px-6 backdrop-blur-md bg-zinc-950/80 sticky top-0 z-50 transition-all duration-300" id="burnout-header">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-2">
+            
+            {/* LOGO */}
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab("home")} id="brand-logo">
+              <div className="w-9 h-9 rounded bg-[#FF5722]/5 flex items-center justify-center border border-[#FF5722]/30 hover:border-[#FF5722]/60 transition-colors">
+                <Flame className="w-4 h-4 text-[#FF5722]" />
               </div>
-            )}
+              <div>
+                <span className="font-sans font-bold tracking-tight text-lg text-zinc-100 uppercase">BurnOut</span>
+                <span className="font-mono text-[9px] text-[#FF5722] tracking-widest block -mt-1 uppercase">utility v1.0.0</span>
+              </div>
+            </div>
+
+            {/* MIDDLE NAVIGATION */}
+            <nav className="flex items-center space-x-0.5 sm:space-x-1 border border-zinc-900/65 bg-zinc-950 px-1 py-1 rounded w-full sm:w-auto justify-center" id="header-internal-navigation">
+              <button
+                onClick={() => setActiveTab("home")}
+                className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "home" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
+              >
+                Optimizer
+              </button>
+              <button
+                onClick={() => setActiveTab("about")}
+                className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "about" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
+              >
+                Mechanics
+              </button>
+              <button
+                onClick={() => setActiveTab("telemetry")}
+                className={`px-2.5 sm:px-3 py-1 font-sans text-[11px] sm:text-xs uppercase tracking-wider rounded transition-all cursor-pointer ${activeTab === "telemetry" ? 'bg-zinc-900 text-[#FF5722] font-semibold' : 'text-zinc-400 hover:text-zinc-200'}`}
+              >
+                Telemetry
+              </button>
+            </nav>
+
+            {/* RIGHT BUTTONS / BADGES UNIT */}
+            <div className="flex items-center space-x-4" id="nav-system-status-wrapper">
+              <WalletConnectButton />
+              
+              <div className="hidden lg:flex items-center space-x-4 text-zinc-400 font-mono text-xs" id="nav-system-status">
+                {networkStatus && (
+                  <div className="flex items-center space-x-5">
+                    <div className="flex items-center space-x-1.5 bg-[#10B981]/5 px-2.5 py-1 rounded border border-[#10B981]/15">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping"></span>
+                      <span className="text-zinc-400 text-[10px] tracking-wide uppercase">SOLANA LIVE:</span>
+                      <span className="text-[#10B981] font-semibold">{(networkStatus.current_tps + tpsFlicker).toLocaleString()} TPS</span>
+                    </div>
+                    <div className="flex items-center space-x-1 text-[10px]">
+                      <span className="text-zinc-500">CONGESTION:</span>
+                      <span className="text-amber-500 uppercase font-medium">{networkStatus.congestion_level}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       {/* CORE FRAMEWORK CONTAINER */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-6 py-10 md:py-14 space-y-12" id="burnout-main-container">
@@ -715,41 +724,22 @@ export default function App() {
                           )}
                         </div>
 
-                        {/* SOL Meter Card */}
-                        <div className="bg-zinc-900/40 p-5 rounded border border-zinc-900 flex items-center justify-between">
-                          <div>
-                            <div className="flex items-center space-x-1.5 mb-1">
-                              <span className="font-mono text-[9px] tracking-wider text-zinc-500 uppercase">TRAPPED CAPITAL METRIC</span>
-                              {analysisResult.real_sol_balance !== undefined && (
-                                <span className="text-[9px] font-mono text-[#10B981] bg-[#10B981]/10 px-1 rounded">
-                                  Bal: {analysisResult.real_sol_balance.toFixed(4)} SOL
-                                </span>
-                              )}
-                            </div>
-                            <span className="font-mono text-3xl font-bold text-[#FF5722] block">
-                              {analysisResult.reclamation.total_reclaimable_sol.toFixed(6)} <span className="text-zinc-500 text-lg font-light">SOL</span>
-                            </span>
-                          </div>
-                          {analysisResult.reclamation.total_reclaimable_sol > 0 && (
-                            <button
-                              onClick={triggerReclaim}
-                              disabled={reclaiming}
-                              className="py-2.5 px-4 bg-[#FF5722] hover:bg-[#FF5722]/90 disabled:bg-zinc-900 text-white font-sans text-[10px] font-bold uppercase tracking-wider rounded transition-all duration-200 flex items-center space-x-1.5 cursor-pointer border border-[#FF5722]/10"
-                            >
-                              {reclaiming ? (
-                                <>
-                                  <Loader2 className="w-3 h-3 animate-spin" />
-                                  <span>SWEEPING [{reclaimStep}/{analysisResult.reclamation.dead_accounts_count}]</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Flame className="w-3.5 h-3.5" />
-                                  <span>BURN OUT RENT</span>
-                                </>
-                              )}
-                            </button>
-                          )}
-                        </div>
+                        {/* SOL Meter Card (Reclaim Action Panel) */}
+                        <ReclaimActionPanel
+                          analysisResult={analysisResult}
+                          reclaiming={reclaiming}
+                          setReclaiming={setReclaiming}
+                          reclaimStep={reclaimStep}
+                          setReclaimStep={setReclaimStep}
+                          reclaimSuccess={reclaimSuccess}
+                          setReclaimSuccess={setReclaimSuccess}
+                          reclaimedAmount={reclaimedAmount}
+                          setReclaimedAmount={setReclaimedAmount}
+                          closedAccounts={closedAccounts}
+                          setClosedAccounts={setClosedAccounts}
+                          setErrorText={setErrorText}
+                          triggerSimulation={triggerReclaim}
+                        />
 
                         {/* Details block */}
                         <div className="space-y-2">
@@ -1386,6 +1376,7 @@ async function assembleReclamationPayload(ownerWallet: PublicKey, emptyTokenAcco
         </div>
       </footer>
 
-    </div>
+      </div>
+    </WalletProvider>
   );
 }
