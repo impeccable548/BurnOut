@@ -16,6 +16,7 @@ export const WalletConnectButton: FC = () => {
   const { 
     wallets, 
     select, 
+    connect,
     publicKey, 
     connected, 
     disconnect, 
@@ -46,6 +47,15 @@ export const WalletConnectButton: FC = () => {
     try {
       select(walletName);
       setIsOpen(false);
+      
+      // Explicitly call connect with a small delay to allow the state to update
+      setTimeout(async () => {
+        try {
+          await connect();
+        } catch (e) {
+          console.warn("Explicit connection triggered or cancelled:", e);
+        }
+      }, 150);
     } catch (err) {
       console.warn("Wallet selection error:", err);
     }
@@ -140,31 +150,36 @@ export const WalletConnectButton: FC = () => {
                     No Solana adapters detected. Please install Phantom or Solflare.
                   </div>
                 ) : (
-                  wallets.map((wallet) => (
-                    <button
-                      key={wallet.adapter.name}
-                      onClick={() => handleSelectWallet(wallet.adapter.name)}
-                      className="w-full flex items-center justify-between px-2.5 py-2 rounded font-sans text-xs text-zinc-300 hover:bg-zinc-900 hover:text-zinc-100 transition-all text-left cursor-pointer"
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        {wallet.adapter.icon ? (
-                          <img 
-                            src={wallet.adapter.icon} 
-                            alt={wallet.adapter.name} 
-                            className="w-4.5 h-4.5 rounded" 
-                            referrerPolicy="no-referrer"
-                          />
-                        ) : (
-                          <Flame className="w-4.5 h-4.5 text-zinc-400" />
+                  <>
+                    {wallets.map((wallet) => (
+                      <button
+                        key={wallet.adapter.name}
+                        onClick={() => handleSelectWallet(wallet.adapter.name)}
+                        className="w-full flex items-center justify-between px-2.5 py-2 rounded font-sans text-xs text-zinc-300 hover:bg-zinc-900 hover:text-zinc-100 transition-all text-left cursor-pointer"
+                      >
+                        <div className="flex items-center space-x-2.5">
+                          {wallet.adapter.icon ? (
+                            <img 
+                              src={wallet.adapter.icon} 
+                              alt={wallet.adapter.name} 
+                              className="w-4.5 h-4.5 rounded" 
+                              referrerPolicy="no-referrer"
+                            />
+                          ) : (
+                            <Flame className="w-4.5 h-4.5 text-zinc-400" />
+                          )}
+                          <span className="font-medium">{wallet.adapter.name}</span>
+                        </div>
+                        
+                        {selectedWallet?.adapter.name === wallet.adapter.name && (
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
                         )}
-                        <span className="font-medium">{wallet.adapter.name}</span>
-                      </div>
-                      
-                      {selectedWallet?.adapter.name === wallet.adapter.name && (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      )}
-                    </button>
-                  ))
+                      </button>
+                    ))}
+                    <div className="pt-2 mt-1.5 border-t border-zinc-900 px-2 pb-1 font-mono text-[8.5px] text-amber-500/80 leading-normal uppercase">
+                      ⚠️ If your wallet doesn't respond, open this app in a New Tab to bypass iframe restrictions.
+                    </div>
+                  </>
                 )}
               </div>
             )}
