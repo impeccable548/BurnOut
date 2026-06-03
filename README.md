@@ -44,4 +44,6 @@ The application implements strict TypeScript interfaces across the stack:
 
 This architecture ensures **type-safe data flow**, **efficient resource utilization**, and **scalable account analysis** for Solana wallet optimization.
 
-workflow
+link
+https://burnout-sttd.onrender.com
+ignore the one on the repo initial interface with click domain
