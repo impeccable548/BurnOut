@@ -75,18 +75,20 @@ export const ReclaimActionPanel: FC<ReclaimActionPanelProps> = ({
         throw new Error("No empty token accounts detected to close.");
       }
 
-      // Convert or format appropriately
-      const mappedAccounts = accountsToClose.map((a: any) => ({
-        pubkey: a.pubkey,
-        mint: a.mint
-      }));
+      try {
+  // 1. Get empty token accounts to close
+  const accountsToClose = analysisResult.reclamation.reclaimable_accounts;
+  if (accountsToClose.length === 0) {
+    throw new Error("No empty token accounts detected to close.");
+  }
 
-      // 2. Build Transaction
-      setReclaimStep(2); // Step 2: building transaction
-      const transaction = await buildCloseAccountTransaction(
-        publicKey.toString(),
-        mappedAccounts
-      );
+  // 2. Build Transaction - pass only mint addresses (buildCloseAccountTransaction derives ATA internally)
+  const mintAddresses = accountsToClose.map((a: any) => a.mint);
+  setReclaimStep(2);
+  const transaction = await buildCloseAccountTransaction(
+    publicKey.toString(),
+    mintAddresses
+  );
 
       // 3. Request blockhash
       setReclaimStep(3); // Step 3: Fetching blockhash
