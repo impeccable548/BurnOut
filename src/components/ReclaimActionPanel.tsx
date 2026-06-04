@@ -48,12 +48,10 @@ export const ReclaimActionPanel: FC<ReclaimActionPanelProps> = ({
   const handleReclaimClick = async () => {
     if (!analysisResult) return;
 
-    // Determine if we should run in simulation or real execution
     const isDemoKeyword = analysisResult.address?.includes("BurnOutReclaim") || analysisResult.address?.includes("Jup6LkbZ");
 
     if (!connected || !publicKey) {
       if (isDemoKeyword) {
-        // Fall back to simulation for demo addresses
         triggerSimulation();
         return;
       } else {
@@ -62,59 +60,44 @@ export const ReclaimActionPanel: FC<ReclaimActionPanelProps> = ({
       }
     }
 
-    // Connect wallet is active! Execute Real Transaction
     setIsExecuting(true);
     setReclaiming(true);
     setReclaimStep(1);
     setErrorText(null);
 
     try {
-      // 1. Map empty token accounts for transaction building
       const accountsToClose = analysisResult.reclamation.reclaimable_accounts;
       if (accountsToClose.length === 0) {
         throw new Error("No empty token accounts detected to close.");
       }
 
-      try {
-  // 1. Get empty token accounts to close
-  const accountsToClose = analysisResult.reclamation.reclaimable_accounts;
-  if (accountsToClose.length === 0) {
-    throw new Error("No empty token accounts detected to close.");
-  }
+      const mintAddresses = accountsToClose.map((a: any) => a.mint);
+      setReclaimStep(2);
+      const transaction = await buildCloseAccountTransaction(
+        publicKey.toString(),
+        mintAddresses
+      );
 
-  // 2. Build Transaction - pass only mint addresses (buildCloseAccountTransaction derives ATA internally)
-  const mintAddresses = accountsToClose.map((a: any) => a.mint);
-  setReclaimStep(2);
-  const transaction = await buildCloseAccountTransaction(
-    publicKey.toString(),
-    mintAddresses
-  );
-
-      // 3. Request blockhash
-      setReclaimStep(3); // Step 3: Fetching blockhash
-      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+      setReclaimStep(3);
+      const { blockhash } = await connection.getLatestBlockhash('confirmed');
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = publicKey;
 
-      // 4. Request wallet signature
-      setReclaimStep(4); // Step 4: Awaiting signature
+      setReclaimStep(4);
       if (!signTransaction) {
         throw new Error("Your wallet does not support signing transactions.");
       }
       const signedTx = await signTransaction(transaction);
 
-      // 5. Submit Transaction to RPC
-      setReclaimStep(5); // Step 5: Sending transaction
+      setReclaimStep(5);
       const signature = await executeReclamation(connection, signedTx, publicKey);
       setTxSignature(signature);
       const explorerUrl = `https://solscan.io/tx/${signature}`;
       setTxExplorerUrl(explorerUrl);
 
-      // 6. Poll for confirmation
-      setReclaimStep(6); // Step 6: Awaiting network confirmation
+      setReclaimStep(6);
       await pollTransactionConfirmation(connection, signature);
 
-      // Successfully confirmed!
       setClosedAccounts(accountsToClose.map((a: any) => a.mint));
       setReclaimedAmount(analysisResult.reclamation.total_reclaimable_sol);
       setReclaimSuccess(true);
@@ -156,7 +139,6 @@ export const ReclaimActionPanel: FC<ReclaimActionPanelProps> = ({
           <span className="text-zinc-500 text-lg font-light">SOL</span>
         </span>
 
-        {/* Display Transaction Success Link if available */}
         {reclaimSuccess && txSignature && (
           <div className="mt-2 text-xs font-mono text-[#10B981] flex items-center gap-1.5" id="tx-success-msg">
             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -178,7 +160,7 @@ export const ReclaimActionPanel: FC<ReclaimActionPanelProps> = ({
           <button
             onClick={handleReclaimClick}
             disabled={reclaiming}
-            className="w-full md:w-auto py-2.5 px-5 bg-[#FF5722] hover:bg-[#FF5722]/90 disabled:bg-zinc-900 text-white font-sans text-[10px] font-bold uppercase tracking-wider rounded transition-all duration-200 flex items-center justify-center space-x-1.5 cursor-pointer border border-[#FF5722]/10"
+            className="w-full md:w-auto py-2.5 px-5 bg-[#FF5722] hover:bg-[#FF5722]/90 disabled:bg-zinc-900 text-white font-sans text-[10px] font-bold uppercase tracking-wider rounded transition-all flex items-center gap-2 justify-center"
             id="burn-out-main-action-btn"
           >
             {reclaiming ? (
